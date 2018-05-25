@@ -123,6 +123,10 @@ public class Student {
             String hql = "from Student";
             Query query = session.createQuery(hql);
             List students = query.list();
+
+            Student student1 = (Student) students.get(0);
+            System.out.println("First Student ID from List: " + student1.getId());
+
             for (Iterator iterator = students.iterator(); iterator.hasNext(); ) {
                 Student student = (Student) iterator.next();
                 System.out.print("Student ID: " + student.getId());
