@@ -1,7 +1,81 @@
-public class Main {
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
+import java.util.*;
+import javax.persistence.*;
+import org.hibernate.query.Query;
 
+
+public class Main {
+    private static SessionFactory factory;
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+
+        // Create the session factory
+        try {
+            factory = new Configuration()
+                    .configure("hibernate.cfg.xml")
+                    .addAnnotatedClass(Student.class)
+                    .buildSessionFactory();
+        } catch (Throwable ex) {
+            System.err.println("Failed to create sessionFactory object." + ex);
+            throw new ExceptionInInitializerError(ex);
+        }
+
+        // Add a student
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Add a new student? (y/n): ");
+        String addStudent = scanner.nextLine();
+        String firstname = null;
+        String lastname = null;
+        String email = null;
+        if (addStudent.equals("y") || addStudent.equals("Y")) {
+            System.out.println("Enter your first name: ");
+            firstname = scanner.nextLine();
+
+            System.out.println("Enter your last name: ");
+            lastname = scanner.nextLine();
+
+            System.out.println("Enter your email address: ");
+            email = scanner.nextLine();
+
+        //create a student object
+        Student student = new Student(firstname, lastname, email);
+        // Add the student to the database
+        student.addStudent(factory);
+
+        // find out the Student id of the newly added student
+        System.out.println("The ID of the new student is: " + student.getNewStudentId(factory));
+    }
+
+    // List all Students
+    System.out.println("List all the students in the directory? (y/n): ");
+        String listStudents = scanner.nextLine();
+        if(listStudents.equals("y") || listStudents.equals("Y")) {
+            //List all the students in the database
+            Student student = new Student();
+            student.listStudents(factory);
+        }
+
+        // Search for students
+        System.out.println("Search for a student in the directory? (y/n): ");
+        String searchStudents = scanner.nextLine();
+        String searchName = null;
+
+        if(searchStudents.equals("y") || searchStudents.equals("Y")) {
+            System.out.println("Enter a first name or last name to search: ");
+            searchName = scanner.nextLine();
+            Student student = new Student();
+            student.searchStudents(factory,searchName);
+        }
+
+        // We're done, close the factory
+        factory.close();
     }
 }
+
+
+
+
 
