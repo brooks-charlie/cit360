@@ -24,12 +24,15 @@ public class Main {
         }
 
         // Add a student
+        // Prompt to add student
         Scanner scanner = new Scanner(System.in);
         System.out.println("Add a new student? (y/n): ");
         String addStudent = scanner.nextLine();
         String firstname = null;
         String lastname = null;
         String email = null;
+
+        // if yes, then gather the details to add the student
         if (addStudent.equals("y") || addStudent.equals("Y")) {
             System.out.println("Enter your first name: ");
             firstname = scanner.nextLine();
@@ -40,19 +43,19 @@ public class Main {
             System.out.println("Enter your email address: ");
             email = scanner.nextLine();
 
-        //create a student object
+        //create a student object using the variables from input
         Student student = new Student(firstname, lastname, email);
-        // Add the student to the database
-        student.addStudent(factory);
 
-        // find out the Student id of the newly added student
-        System.out.println("The ID of the new student is: " + student.getNewStudentId(factory));
+        // Add the student to the database and get the student id
+            System.out.println(student.addStudent(factory));
+
     }
 
     // List all Students
     System.out.println("List all the students in the directory? (y/n): ");
         String listStudents = scanner.nextLine();
         if(listStudents.equals("y") || listStudents.equals("Y")) {
+
             //List all the students in the database
             Student student = new Student();
             student.listStudents(factory);
@@ -66,6 +69,8 @@ public class Main {
         if(searchStudents.equals("y") || searchStudents.equals("Y")) {
             System.out.println("Enter a first name or last name to search: ");
             searchName = scanner.nextLine();
+
+            // search for the student
             Student student = new Student();
             student.searchStudents(factory,searchName);
         }

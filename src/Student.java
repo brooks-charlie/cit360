@@ -87,6 +87,7 @@ public class Student {
         return studentId;
     }
 
+    //
     public Integer addStudent(SessionFactory factory){
         //save the student to the database
         Session session = factory.getCurrentSession();
@@ -94,21 +95,22 @@ public class Student {
             // begin the session transaction
             session.beginTransaction();
             // insert the student info to the database
-            System.out.println("inserting and committing transaction...");
+            //System.out.println("inserting and committing transaction...");
             session.save(this);
             // commit the database transaction
             session.getTransaction().commit();
-            System.out.println("committed");
+            //System.out.println("committed");
 
         } catch (Exception e) {
             if (session.beginTransaction() != null) session.beginTransaction().rollback();
             e.printStackTrace();
         }finally {
             // Clean things up
-            System.out.println("Closing transaction");
+            //System.out.println("Closing transaction");
             session.close();
         }
-        return this.getId();
+        // get and return the student id of the new student
+        return this.getNewStudentId(factory);
     }
     public void listStudents(SessionFactory factory){
 
