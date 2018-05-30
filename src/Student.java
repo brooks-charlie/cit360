@@ -1,14 +1,25 @@
+import com.google.gson.JsonParser;
+import com.oracle.javafx.jmx.json.JSONReader;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Iterator;
-import java.util.List;
+import java.io.*;
+import java.util.*;
+//import org.json.simple.JSONObject;
+import javax.json.JsonObject;
+import javax.json.JsonWriter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 @Entity
 @Table(name="student")
@@ -112,17 +123,60 @@ public class Student {
         // get and return the student id of the new student
         return this.getNewStudentId(factory);
     }
-    public void listStudents(SessionFactory factory){
+
+    //JSON Build
+    public String createJson(List studentList){
+
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        Gson gson = gsonBuilder.create();
+
+        try {
+            //System.out.println(gson.toJson(studentList));
+        } catch (Exception e) { }
+
+        try{
+            FileWriter file = new FileWriter("students.txt");
+            file.write(gson.toJson(studentList));
+            file.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return gson.toJson(studentList);
+    }
+
+    //JSON Parse
+    public JSONArray parseJson(String filePath) {
+        //String filePath = "students.txt";
+        JSONArray jsonArray = null;
+        try {
+            FileReader reader = new FileReader(filePath);
+            JSONParser jsonParser = new JSONParser();
+            jsonArray = (JSONArray) jsonParser.parse(reader);
+
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        }catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+        return jsonArray;
+    }
+
+
+    //Java Collection List
+    public List listStudents(SessionFactory factory){
 
         Transaction tx = null;
         Session session = factory.openSession();
+        List students = null;
 
         try {
             tx = session.beginTransaction();
 
             String hql = "from Student";
             Query query = session.createQuery(hql);
-            List students = query.list();
+            students = query.list();
 
             Student student1 = (Student) students.get(0);
             System.out.println("First Student ID from List: " + student1.getId());
@@ -142,7 +196,84 @@ public class Student {
             session.close();
 
         }
+        return students;
     }
+
+    //Java Collections
+
+
+    //Java Collection Set
+    public Set<Integer> setStudents(List studentList){
+        Set<Integer> studentIds = null;
+
+        try {
+            studentIds = new HashSet<Integer>();
+            for (Iterator iterator = studentList.iterator(); iterator.hasNext(); ) {
+                Student student = (Student) iterator.next();
+                //Set add method
+                studentIds.add(student.getId());
+            }
+        } catch (Exception e) { }
+
+        //Set size method
+        System.out.println("The last Student ID is: " + studentIds.size());
+        return studentIds;
+    }
+
+    //Java Collection Map
+    public Map mapStudents(List studentList){
+        Map students = null;
+
+        try {
+            students = new HashMap();
+            for (Iterator iterator = studentList.iterator(); iterator.hasNext(); ) {
+                Student student = (Student) iterator.next();
+                //Map add method
+                students.put(student.id,student.firstName);
+            }
+        } catch (Exception e) { }
+
+        //Print Map
+        System.out.println("Print of student HashMap: " + students);
+        return students;
+    }
+
+    //Java Collection TreeMap
+    public TreeMap treeMapStudents(List studentList){
+        TreeMap students = null;
+
+        try {
+            students = new TreeMap();
+            for (Iterator iterator = studentList.iterator(); iterator.hasNext(); ) {
+                Student student = (Student) iterator.next();
+                //TreeMap add method
+                students.put(student.id,student.firstName);
+            }
+        } catch (Exception e) { }
+
+        //print TreeMap
+        System.out.println("Print of student TreeMap: " + students);
+        return students;
+    }
+
+    //Java Collection TreeSet
+    public TreeSet treeSetStudents(List studentList){
+        TreeSet students = null;
+
+        try {
+            students = new TreeSet();
+            for (Iterator iterator = studentList.iterator(); iterator.hasNext(); ) {
+                Student student = (Student) iterator.next();
+                //TreeSet add method
+                students.add(student.getId());
+            }
+        } catch (Exception e) { }
+
+        //Set size method
+        System.out.println("Print of student TreeSet: " + students);
+        return students;
+    }
+
     public void searchStudents(SessionFactory factory, String name){
         Transaction tx = null;
         Session session = factory.openSession();

@@ -6,6 +6,10 @@ import org.hibernate.cfg.Configuration;
 import java.util.*;
 import javax.persistence.*;
 import org.hibernate.query.Query;
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
 
 
 public class Main {
@@ -58,7 +62,14 @@ public class Main {
 
             //List all the students in the database
             Student student = new Student();
-            student.listStudents(factory);
+            //student.listStudents(factory);
+            student.setStudents(student.listStudents(factory));
+            student.mapStudents(student.listStudents(factory));
+            student.treeSetStudents(student.listStudents(factory));
+            student.treeMapStudents(student.listStudents(factory));
+            System.out.println(student.createJson(student.listStudents(factory)));
+            System.out.println("PArse: "+student.parseJson("students.txt"));
+            //Next add json file to database
         }
 
         // Search for students
@@ -77,6 +88,7 @@ public class Main {
 
         // We're done, close the factory
         factory.close();
+
     }
 }
 
